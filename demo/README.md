@@ -1,5 +1,8 @@
 # ACRS live demo
 
+**Try it: https://acrs-demo.onrender.com** (free tier - sleeps after 15min
+idle, first request can take ~30s to wake it up)
+
 A thin FastAPI wrapper around the reviewed scorer at
 [`prototypes/agent-codebase-readiness-score/score_v2.py`](../prototypes/agent-codebase-readiness-score/).
 It imports that file directly rather than copying it, so this demo and the
@@ -39,6 +42,9 @@ honesty standard as the rest of this portfolio.
 
 ## Deploy (Render)
 
-This repo includes a `render.yaml` at the root. On Render: **New >
-Blueprint**, connect this repo, and it picks up the config automatically
-(root dir `demo/`, free plan, `uvicorn app:app` on `$PORT`).
+This repo includes a `render.yaml` at the root as a reference for the
+service config (root dir `demo/`, free plan, `uvicorn app:app` on `$PORT`,
+`PYTHON_VERSION` pinned to 3.11.9 to avoid pulling an unreleased-wheel
+version of `pydantic-core`). The live instance was created via the Render
+CLI (`render services create`) against a GitHub App-connected repo, so
+pushes to `main` auto-deploy.
