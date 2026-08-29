@@ -1,0 +1,12 @@
+[
+  {"text": "I forgot my password and the reset email never arrived, can you help?", "true_category": "password_reset"},
+  {"text": "Locked out of my account, tried resetting but got nothing in my inbox.", "true_category": "password_reset"},
+  {"text": "Why was I charged twice this month? I need a refund on the duplicate invoice.", "true_category": "billing"},
+  {"text": "Can you send me last month's invoice again, I can't find it in my email.", "true_category": "billing"},
+  {"text": "We're hitting 429 errors, seems like we blew past our monthly API call limit.", "true_category": "plan_limits"},
+  {"text": "How many API calls does the Pro plan include per month?", "true_category": "plan_limits"},
+  {"text": "The dashboard chart is rendering upside down on Safari, here's a screenshot.", "true_category": "bug_report"},
+  {"text": "Export to CSV button does nothing when clicked, no error shown either.", "true_category": "bug_report"},
+  {"text": "Can you tell me more about your company's history and mission?", "true_category": "other"},
+  {"text": "Do you offer student discounts?", "true_category": "other"}
+]
