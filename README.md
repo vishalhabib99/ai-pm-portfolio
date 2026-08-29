@@ -8,15 +8,20 @@ Structured record of product work as an AI Product Manager: how problems were fr
 - **`case-studies/`** — Post-launch writeups: what was built, the tradeoffs made, and the measured outcome
 - **`prototypes/`** — Small working builds (RAG pipelines, agent demos, eval harnesses) that back up the PRDs with something real
 
-## Featured: Ticket Triage Assistant
+## Featured: Agent Codebase Readiness Score (ACRS)
 
-A complete PRD → prototype → case-study arc, worth reading start to finish:
+A product idea grounded in real, sourced 2026 industry data on why agentic AI projects fail to reach production — and a working prototype that proves the core mechanic on a real codebase, not a toy example.
 
-1. [**PRD**](prds/2026-08-support-ticket-triage-assistant.md) — problem framing, RAG-vs-fine-tuning tradeoff, success metrics, evaluation plan
-2. [**Prototype**](prototypes/ticket-triage-rag/) — a working TF-IDF RAG pipeline with a real eval harness, run against 10 labeled test tickets
-3. [**Case study**](case-studies/2026-08-support-ticket-triage-assistant.md) — the honest result: the baseline failed the launch bar (60% vs. a 90% target), why, and what the eval gate caught before it could ship
+1. [**PRD**](prds/2026-08-agent-codebase-readiness-score.md) — the problem: 79% of enterprises adopt AI agents, only 11% reach production; coding agents perform far worse on real codebases than on demos. Sourced from IBM, Gartner-cited research, MachineLearningMastery, Lyzr, Arcade.dev, MorphLLM, and Webfuse (full citations in the PRD).
+2. [**Prototype**](prototypes/agent-codebase-readiness-score/) — a real per-module readiness scorer, run against the actual [pallets/flask](https://github.com/pallets/flask) production codebase. Includes an honestly-disclosed limitation in one of its own proxy metrics, found and documented rather than hidden.
 
-This one's marked as a sample/practice piece rather than real shipped work, but it's meant to show the actual thing that matters: PRD → build → eval → honest verdict, not just a list of bullet points.
+## Also: Ticket Triage Assistant (practice arc)
+
+A complete PRD → prototype → case-study arc used to establish the working method, marked as sample/practice work rather than a real project:
+
+- [PRD](prds/2026-08-support-ticket-triage-assistant.md) · [Prototype](prototypes/ticket-triage-rag/) · [Case study](case-studies/2026-08-support-ticket-triage-assistant.md)
+
+Its prototype's baseline **failed** its own launch bar (60% vs. a 90% target) — kept in the repo on purpose, because a real eval that catches a real failure is more credible than a demo tuned to always look good.
 
 ## Status
 
