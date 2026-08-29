@@ -14,6 +14,7 @@ A product idea grounded in real, sourced 2026 industry data on why agentic AI pr
 
 1. [**PRD**](prds/2026-08-agent-codebase-readiness-score.md) — the problem: 79% of enterprises adopt AI agents, only 11% reach production; coding agents perform far worse on real codebases than on demos. Sourced from IBM, Gartner-cited research, MachineLearningMastery, Lyzr, Arcade.dev, MorphLLM, and Webfuse (full citations in the PRD).
 2. [**Prototype**](prototypes/agent-codebase-readiness-score/) — a real per-module readiness scorer, run against the actual [pallets/flask](https://github.com/pallets/flask) production codebase. Includes an honestly-disclosed limitation in one of its own proxy metrics, found and documented rather than hidden.
+3. [**Case study**](case-studies/2026-08-agent-codebase-readiness-score.md) — what the prototype proved, what broke in one of its own scoring heuristics, and the concrete next steps identified from it.
 
 ## Also: Ticket Triage Assistant (practice arc)
 
