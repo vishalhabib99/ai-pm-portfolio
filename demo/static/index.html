@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Codebase Readiness Score - live demo</title>
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #f2a541;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    padding: 40px 20px 80px;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  p.lede { color: var(--muted); line-height: 1.5; margin-top: 0; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  label { display: block; font-size: 0.85rem; color: var(--muted); margin-bottom: 6px; }
+  input {
+    width: 100%;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+  }
+  .row { display: flex; gap: 12px; margin-bottom: 14px; }
+  .row > div { flex: 1; }
+  button {
+    background: var(--accent);
+    color: #1a1300;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .status { margin-top: 14px; font-size: 0.9rem; color: var(--muted); min-height: 1.2em; }
+  .error { color: #f85149; }
+  .warning {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--accent);
+    background: rgba(242, 165, 65, 0.08);
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  table { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 0.88rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 500; }
+  .readiness { font-weight: 700; }
+  footer { margin-top: 30px; font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Agent Codebase Readiness Score</h1>
+  <p class="lede">
+    Paste a public GitHub repo. This runs the same scorer documented in the
+    <a href="https://github.com/vishalhabib99/ai-pm-portfolio" style="color:var(--accent)">ai-pm-portfolio</a>
+    case study - per-module readiness for autonomous coding agents, from docstring
+    density, file size, recent churn, and AST-resolved test references. Not a
+    validated accuracy claim, just the real proxy scorer, run live.
+  </p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label for="repo">GitHub repo URL</label>
+        <input id="repo" placeholder="https://github.com/pallets/flask" />
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="pkg">Package name (optional - defaults to repo name)</label>
+        <input id="pkg" placeholder="flask" />
+      </div>
+    </div>
+    <button id="go">Score it</button>
+    <div class="status" id="status"></div>
+    <div class="warning" id="warning" hidden></div>
+    <table id="results" hidden>
+      <thead>
+        <tr>
+          <th>module</th><th>readiness</th><th>doc density</th>
+          <th>avg lines</th><th>churn (commits)</th><th>test refs</th><th>files</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    Public demo, rate-limited to 5 scores/hour per visitor, one job at a time,
+    200MB repo cap, 45s clone timeout. Only reads and statically analyzes the
+    target repo - never executes its code.
+    <a href="https://github.com/vishalhabib99/ai-pm-portfolio/tree/main/prototypes/agent-codebase-readiness-score">
+      Source, PRD, and disclosed limitations &rarr;
+    </a>
+  </footer>
+</main>
+
+<script>
+  const goBtn = document.getElementById("go");
+  const statusEl = document.getElementById("status");
+  const warningEl = document.getElementById("warning");
+  const table = document.getElementById("results");
+  const rows = document.getElementById("rows");
+
+  async function run() {
+    const repo_url = document.getElementById("repo").value.trim();
+    const package_name = document.getElementById("pkg").value.trim() || undefined;
+
+    warningEl.hidden = true;
+    table.hidden = true;
+    rows.innerHTML = "";
+    statusEl.className = "status";
+
+    if (!repo_url) {
+      statusEl.textContent = "Enter a GitHub repo URL first.";
+      statusEl.className = "status error";
+      return;
+    }
+
+    goBtn.disabled = true;
+    statusEl.textContent = "Cloning and scoring - this can take up to ~45 seconds...";
+
+    try {
+      const res = await fetch("/api/score", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ repo_url, package_name }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        statusEl.textContent = data.detail || "Something went wrong.";
+        statusEl.className = "status error";
+        return;
+      }
+
+      statusEl.textContent = `Resolved ${data.resolved_symbols} re-exported symbols. Done.`;
+      if (data.warning) {
+        warningEl.textContent = data.warning;
+        warningEl.hidden = false;
+      }
+
+      for (const r of data.results) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.module}</td>
+          <td class="readiness">${r.readiness}</td>
+          <td>${r.doc_density}</td>
+          <td>${r.avg_lines}</td>
+          <td>${r.churn_commits}</td>
+          <td>${r.test_refs}</td>
+          <td>${r.n_files}</td>`;
+        rows.appendChild(tr);
+      }
+      table.hidden = false;
+    } catch (e) {
+      statusEl.textContent = "Network error - try again.";
+      statusEl.className = "status error";
+    } finally {
+      goBtn.disabled = false;
+    }
+  }
+
+  goBtn.addEventListener("click", run);
+</script>
+</body>
+</html>
