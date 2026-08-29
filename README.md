@@ -8,10 +8,16 @@ Structured record of product work as an AI Product Manager: how problems were fr
 - **`case-studies/`** — Post-launch writeups: what was built, the tradeoffs made, and the measured outcome
 - **`prototypes/`** — Small working builds (RAG pipelines, agent demos, eval harnesses) that back up the PRDs with something real
 
-## Why this exists
+## Featured: Ticket Triage Assistant
 
-Most PM portfolios are lists of bullet points. This one is meant to show the actual reasoning and artifacts behind AI product decisions — PRDs before the fact, case studies after, and prototypes as proof of technical fluency.
+A complete PRD → prototype → case-study arc, worth reading start to finish:
+
+1. [**PRD**](prds/2026-08-support-ticket-triage-assistant.md) — problem framing, RAG-vs-fine-tuning tradeoff, success metrics, evaluation plan
+2. [**Prototype**](prototypes/ticket-triage-rag/) — a working TF-IDF RAG pipeline with a real eval harness, run against 10 labeled test tickets
+3. [**Case study**](case-studies/2026-08-support-ticket-triage-assistant.md) — the honest result: the baseline failed the launch bar (60% vs. a 90% target), why, and what the eval gate caught before it could ship
+
+This one's marked as a sample/practice piece rather than real shipped work, but it's meant to show the actual thing that matters: PRD → build → eval → honest verdict, not just a list of bullet points.
 
 ## Status
 
-🚧 Freshly scaffolded — first PRD and case study in progress.
+More PRDs, prototypes, and case studies added as real projects come in.
