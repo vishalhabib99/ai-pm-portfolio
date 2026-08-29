@@ -40,3 +40,20 @@ This is the same kind of finding the [ticket-triage-rag prototype](../ticket-tri
 ## What a real v1 would add (per the PRD)
 
 This prototype only uses static analysis + git history — no actual agent runs. The PRD's real v1 samples actual historical PRs and measures real agent task success/cost/quality against them. That requires running paid coding-agent calls against sampled tasks, which is out of scope for this lightweight local prototype, but is the next real build step.
+
+## Update: v2 fixes the `test_refs` bug
+
+`score_v2.py` replaces the literal-string grep with a real fix: it parses `flask/__init__.py` with `ast` to build a map of every re-exported symbol (e.g. `Flask` → `app`) back to the submodule that actually defines it, then resolves each test file's real imports (and `flask.Symbol` attribute usage) against that map — instead of string-matching the module's own directory name.
+
+```
+Resolved 39 re-exported symbols from flask/__init__.py
+
+module       readiness  doc_dens  avg_lines  churn   test_refs  files
+core         63.9       0.59      350.0      235     35         18
+json         59.2       0.47      237.0      18      6          3
+sansio       37.6       0.61      835.0      27      0          3
+```
+
+**What changed and why:** `core`'s `test_refs` went from a false **0** to a real **35**, and its readiness ranking flipped from *lowest* to *highest* of the three modules — the v1 bug wasn't a rounding error, it was inverting the actual conclusion for Flask's most important module. `json` dropped slightly (7→6) as AST resolution is more precise than substring grep. `sansio` stayed at **0** — but now for a *real* reason, confirmed by checking `flask/__init__.py` directly: it has zero public re-exports, so it's a genuinely internal-only module that tests exercise indirectly (via `Flask`/`Blueprint`, which subclass it), not by name. That's a legitimate readiness signal, not a bug.
+
+**Residual honest caveat:** this still doesn't measure real test *coverage* (line/branch %) — it measures whether tests reference a module's public symbols at all. A module could be referenced once and still be poorly covered. A further-honest v3 would diff against actual `coverage.py` output rather than import resolution, which is still just a proxy one level closer to the truth.
