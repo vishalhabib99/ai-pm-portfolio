@@ -22,6 +22,12 @@ A product idea grounded in real, sourced 2026 industry data on why agentic AI pr
 2. [**Prototype**](prototypes/agent-codebase-readiness-score/) — a real per-module readiness scorer, run against the actual [pallets/flask](https://github.com/pallets/flask) production codebase. Includes an honestly-disclosed limitation in one of its own proxy metrics, found, fixed, and re-validated with real before/after numbers.
 3. [**Case study**](case-studies/2026-08-agent-codebase-readiness-score.md) — what the prototype proved, what broke in one of its own scoring heuristics, and how the fix changed the actual outcome.
 
+## Featured: mcp-doctor — real OSS contribution, not a simulated one
+
+A working open-source CLI ([mcp-doctor](https://github.com/vishalhabib99/mcp-doctor), on PyPI as [`mcp-server-lint`](https://pypi.org/project/mcp-server-lint/)) that statically audits MCP server implementations for spec conformance and quality — and what happened when it got pointed at a real, actively-maintained 4.6k-star repo instead of a fixture.
+
+[**Case study**](case-studies/2026-08-mcp-doctor-oss-contribution.md) — shipped a finding, got told with specifics why it was wrong (twice, once on a security-flavored claim that turned out to be false), verified each correction against the actual source before fixing it, and landed a [merged PR](https://github.com/homeassistant-ai/ha-mcp/pull/2327) into the target repo. The correction cycles are the point, not the merge.
+
 ## Also: Ticket Triage Assistant (practice arc)
 
 A complete PRD → prototype → case-study arc used to establish the working method, marked as sample/practice work rather than a real project:
