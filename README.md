@@ -24,9 +24,10 @@ A product idea grounded in real, sourced 2026 industry data on why agentic AI pr
 
 ## Featured: mcp-doctor — real OSS contribution, not a simulated one
 
-A working open-source CLI ([mcp-doctor](https://github.com/vishalhabib99/mcp-doctor), on PyPI as [`mcp-server-lint`](https://pypi.org/project/mcp-server-lint/)) that statically audits MCP server implementations for spec conformance and quality — and what happened when it got pointed at a real, actively-maintained 4.6k-star repo instead of a fixture.
+A working open-source CLI ([mcp-doctor](https://github.com/vishalhabib99/mcp-doctor), on PyPI as [`mcp-server-lint`](https://pypi.org/project/mcp-server-lint/)) that statically audits MCP server implementations for spec conformance and quality — and what happened when it got pointed at real, actively-maintained repos instead of fixtures.
 
-[**Case study**](case-studies/2026-08-mcp-doctor-oss-contribution.md) — shipped a finding, got told with specifics why it was wrong (twice, once on a security-flavored claim that turned out to be false), verified each correction against the actual source before fixing it, and landed a [merged PR](https://github.com/homeassistant-ai/ha-mcp/pull/2327) into the target repo. The correction cycles are the point, not the merge.
+1. [**Case study: one arc, two correction cycles**](case-studies/2026-08-mcp-doctor-oss-contribution.md) — shipped a finding on a 4.6k-star repo, got told with specifics why it was wrong (twice, once on a security-flavored claim that turned out to be false), verified each correction against the actual source before fixing it, and landed a [merged PR](https://github.com/homeassistant-ai/ha-mcp/pull/2327). The correction cycles are the point, not the merge.
+2. [**Case study: turning that into a repeatable process**](case-studies/2026-09-mcp-doctor-systematic-dogfooding.md) — the same discipline run 20+ times against real servers up to 50k stars, including GitHub's own official `github-mcp-server` (32.6k★, 0 of 114+ tools invisible until fixed), plus two feature requests correctly declined once the actual engineering cost was traced out. The judgment call that repeats every pass: is this a real gap, and is it worth building support for.
 
 ## Also: Ticket Triage Assistant (practice arc)
 
