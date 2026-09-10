@@ -30,6 +30,14 @@ Three independent, complementary open-source CLIs that together audit an MCP ser
 2. [**Case study: turning that into a repeatable process**](case-studies/2026-09-mcp-doctor-systematic-dogfooding.md) — the same discipline run 20+ times against real servers up to 50k stars, including GitHub's own official `github-mcp-server` (32.6k★, 0 of 114+ tools invisible until fixed), plus two feature requests correctly declined once the actual engineering cost was traced out. The judgment call that repeats every pass: is this a real gap, and is it worth building support for.
 3. [**Case study: completing the trilogy, catching my own bugs twice**](case-studies/2026-09-mcp-fuzz-and-reality-check.md) — building the two remaining tools, and two separate incidents where dogfooding caught a real bug in the tool itself before it shipped: one, an over-broad fix that would have silently retracted an already-public finding, caught by re-verifying every claim already made before calling a fix done; the other, the newest tool's very first extended dogfood pass finding a bug in its own input generator. Neither bug reached anyone else.
 
+## Featured: Agent Outcome Trust Score (AOTS)
+
+Grounded in a real 2026 finding: half of enterprises have shipped an agent/LLM feature that passed internal evaluation and still caused a customer-facing failure, and only 5% fully trust their own automated evals (VentureBeat, June 2026 VB Pulse survey) — evaluations don't measure what a business stakeholder actually needs to trust. The existing MCP trilogy above scores whether a *server* is well-built; this scores whether a deployed *agent's* real behavior is something a non-engineer should trust.
+
+1. [**PRD**](prds/2026-09-agent-outcome-trust-score.md) — the problem, sourced from VentureBeat's 2026 enterprise agent-evaluation-gap reporting, and why business-relevant criteria (task success, graceful escalation, auditability, consistency, cost) are a different question than protocol compliance.
+2. [**Prototype**](prototypes/agent-outcome-trust-score/) — a real reference-agent run: this session driving [`codebase-memory-mcp`](https://github.com/DeusData/codebase-memory-mcp) (42.7k★, already in this portfolio via mcp-fuzz) against the actual `mcp-doctor` codebase, live, one tool call at a time — not a scripted fixed path.
+3. [**Case study**](case-studies/2026-09-agent-outcome-trust-score.md) — 5/5 tasks reached a correct, independently-verified answer; every first-attempt failure traced to CLI/JSON interface friction, never a reasoning error; two scoring gaps (full consistency re-run, cost-per-task) disclosed directly rather than smoothed over.
+
 ## Also: Ticket Triage Assistant (practice arc)
 
 A complete PRD → prototype → case-study arc used to establish the working method, marked as sample/practice work rather than a real project:
