@@ -8,6 +8,10 @@ Written by [Vishal Habib](https://github.com/vishalhabib99) — Product Leader c
 
 The PRDs and prototypes below are separate from that employer work (nothing proprietary or confidential included) — they're where new ideas get tested using the same rigor: real data, real code, honest evals.
 
+## Use the method yourself
+
+The two decisions this portfolio keeps coming back to (whether to build something at all, and how to set an eval's launch bar before the results exist) are packaged as installable Claude Code skills in **[ai-pm-skills](https://github.com/vishalhabib99/ai-pm-skills)**: `/build-or-not` and `/eval-plan`. The Ticket Triage prototype below is `/eval-plan`'s worked example.
+
 ## Structure
 
 - **`prds/`** — Product requirement docs for AI features (problem, users, success metrics, scope, risks/evals plan)
