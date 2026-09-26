@@ -62,7 +62,7 @@ So the cost levers are **product decisions**: how confident the classifier must 
 
 ## What this doesn't know yet
 
-- **Quality per model hasn't been measured.** The prototype's cheapest baseline (TF-IDF, no model) failed the gate at 60% ([case study](../case-studies/2026-08-support-ticket-triage-assistant.md)), and no Claude model has been run against the eval yet. The recommendation is a test order, not a result. Running the 20-ticket eval on four options costs well under a dollar.
+- **Quality per model hasn't been measured.** The prototype's cheapest baseline (TF-IDF, no model) failed the gate at 60% ([case study](../case-studies/2026-08-support-ticket-triage-assistant.md)), and no Claude model has been run against the eval yet. The recommendation is a test order, not a result. Running the prototype's 10-ticket eval on all four options costs well under a dollar (and 10 tickets is too few to decide on; the eval set should grow first).
 - **Token counts are assumptions**, all listed at the top of `unit_economics.py`. Replace them with the `usage` numbers from real calls, and re-run.
 - **Loaded agent cost and minutes saved are assumptions** too, and they decide the value side. They should come from a time study before any price goes to customers.
 - The feature is a sample PRD, not a shipped product.
