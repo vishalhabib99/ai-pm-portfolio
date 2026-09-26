@@ -16,6 +16,7 @@ The two decisions this portfolio keeps coming back to (whether to build somethin
 
 - **`prds/`** — Product requirement docs for AI features (problem, users, success metrics, scope, risks/evals plan)
 - **`case-studies/`** — Post-launch writeups: what was built, the tradeoffs made, and the measured outcome
+- **`memos/`** — Decision memos with the numbers behind them, e.g. [which model to use and how to price an AI support-drafting feature](memos/2026-09-ai-feature-unit-economics.md) (verified model pricing, a sensitivity analysis, and a re-runnable calculator)
 - **`prototypes/`** — Small working builds (RAG pipelines, agent demos, eval harnesses) that back up the PRDs with something real
 
 ## Featured: Agent Codebase Readiness Score (ACRS)
