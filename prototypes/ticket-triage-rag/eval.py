@@ -72,7 +72,7 @@ def run_eval():
     precision_answered = answered_ok / len(answered) if answered else float("nan")
     print()
     print(f"Thresholds: score >= {CONFIDENCE_THRESHOLD}, top-2 gap >= {GAP_THRESHOLD} "
-          "(gap chosen on these same tickets: in-sample)")
+          "(gap chosen on tickets_eval.json; see experiments/ for the fresh-set check)")
     print("PRD targets: >=90% accuracy, >=95% precision on high-confidence predictions.")
     if accuracy < 0.90 or precision_answered < 0.95:
         print("=> DOES NOT meet launch bar. See README for what this means.")

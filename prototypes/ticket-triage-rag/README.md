@@ -55,15 +55,27 @@ baseline (score only)        60% (6/10)                 60% (6/10)        0
 + retry, then abstain        80% (8/10)                  75% (6/8)        2
 ```
 
-**The retry added nothing.** Every gain comes from abstaining, and the retry changed no outcome:
+**On these 10 tickets, the retry added nothing.** Every gain comes from abstaining, and the retry changed no outcome:
 
 - **It fired on the wrong tickets.** Both retries were the off-topic ones ("company history", "student discounts"). They have no right doc to find, and they were abstained on whether or not the retry ran.
 - **It never fired on the real retrieval misses.** The Safari ticket's gap was 0.036 and the CSV ticket's was 0.184 (only one doc shared any words, and it was the wrong one). Both looked *confident*. An "unsure" trigger can't catch a confident wrong answer.
 - **Even if it had fired, this rewrite couldn't fix them.** Forcing the stemmed pass on every ticket still sends Safari to `password_reset` and CSV to `plan_limits`. Suffix-stripping can't turn "Safari" into "browser". That needs meaning-level matching (embeddings, or an LLM rewrite).
 
-**Caveat on the 80%:** the 0.02 gap threshold was picked by looking at these same 10 tickets (see the table above), so the abstain gain is in-sample. It needs a fresh, unseen ticket set before it counts.
+**The 80% did not hold up on fresh tickets.** The 0.02 threshold was picked by looking at these same 10 tickets, so I pre-registered a check ([`experiments/2026-09-28-fresh-set.md`](experiments/2026-09-28-fresh-set.md), committed before the tickets existed). A separate agent then wrote 16 new tickets after seeing only the help docs:
 
-**The PM takeaway:** a retry loop helps only when two things hold. First, the confidence signal has to flag the failures you actually have. Second, the rewrite has to bring in knowledge the first pass lacked. Here neither held, so the right investment is still the one the failure table points to (better matching for the 2 retrieval misses). A smarter loop around the same matching isn't it.
+```
+config                         accuracy   precision when answering  retried
+baseline (score only)        38% (6/16)                 38% (6/16)        0
++ abstain on narrow gap      38% (6/16)                 40% (6/15)        0
++ retry, then abstain        44% (7/16)                 44% (7/16)        1
+Recall@1: 50% (6/12)   Recall@2: 67% (8/12)
+```
+
+- **The abstain rule failed at its job.** It caught 0 of 4 off-topic tickets (all their gaps were above 0.02), and all 4 got confident wrong drafts. It technically passed my pre-registered bar (+2 points precision on one ticket), but that bar was too weak. The write-up says so.
+- **The retry did fix one ticket.** "Where do I find old receipts?" was a near-tie on the first pass, and the suffix-stripped retry matched "receipts" to "Receipts" in the billing doc and got it right. It's one ticket out of 16, but it shows the mechanism working as designed.
+- **The baseline itself dropped from 60% to 38%.** Real phrasing ("Too Many Requests", "spinning wheel", "Microsoft sign-in") misses the docs' wording much more often than the original 10 tickets did.
+
+**The PM takeaway:** a retry loop helps only when two things hold. First, the confidence signal has to flag the failures you actually have. Second, the rewrite has to bring in knowledge the first pass lacked. On fresh tickets, both held exactly once in 16. Every other failure was a confident wrong answer that no "unsure" trigger sees. The right investment is still better matching (embeddings or an LLM classifier), and a smarter loop around weak matching isn't enough. The original 10-ticket set also flattered the baseline: a second, unseen set changed the headline number by 22 points.
 
 **This is the point of the eval, not a bug in the eval.** This is exactly the failure mode the PRD's offline-eval gate exists to catch before launch — a naive retrieval-only classifier isn't safe to ship as-is. In a real build, the next step from here would be either:
 - swap the classification step for an LLM call (per the PRD's actual approach) rather than raw TF-IDF similarity, which should handle "this doesn't match anything" much better, or
@@ -75,5 +87,7 @@ Keeping this baseline in the repo instead of hiding the bad numbers — a weak b
 
 - `rag.py` — TF-IDF retrieval, triage loop (answer / retry once / abstain), draft generation
 - `eval.py` — offline eval harness (3-config ablation of accuracy + precision when answering, plus retrieval-only recall@k)
-- `tickets_eval.json` — 10 labeled test tickets, including 2 off-topic "other" cases
+- `tickets_eval.json` — 10 labeled test tickets, including 2 off-topic "other" cases (thresholds were tuned on these)
+- `tickets_fresh.json` — 16 held-out tickets written blind to the code and scores; run with `python3 eval.py tickets_fresh.json`
+- `experiments/` — pre-registration and result for the fresh-set check
 - `docs/` — the small help-doc corpus used for retrieval

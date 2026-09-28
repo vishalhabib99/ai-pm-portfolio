@@ -1,0 +1,18 @@
+[
+  {"text": "we got billed twice this month, same amount, 2 minutes apart. pls fix", "true_category": "billing"},
+  {"text": "Our integration started throwing 'Too Many Requests' around noon today and nothing is going through. We didn't change anything on our side. Is there a cap we're hitting? We're on the cheaper tier I think.", "true_category": "plan_limits"},
+  {"text": "Hi, I'm putting together a security questionnaire for our procurement team. Do you have a SOC 2 Type II report and a signed DPA you can send over?", "true_category": "other"},
+  {"text": "cant get into my account. typed my pw wrong a bunch and now it says account temporarily disabled?? how long does that last", "true_category": "password_reset"},
+  {"text": "When I export a report to CSV the date column comes out shifted by one day for every row. Chrome on Windows 11. Expected 2026-09-14, got 2026-09-13. Happens every time.", "true_category": "bug_report"},
+  {"text": "Hello, where do I find old receipts? My accountant needs everything from Q1 and I can only see the most recent one in my email.", "true_category": "billing"},
+  {"text": "Our company switched everyone to Microsoft sign-in last week and now I have no idea what my login is. The 'forgot password' thing sends me an email but the link just bounces me back to the start. Help!!", "true_category": "password_reset"},
+  {"text": "Is there any way to rename a workspace? I made a typo when I set it up and it's bugging me.", "true_category": "other"},
+  {"text": "How many calls do we get per month on Pro vs Starter? Trying to figure out if we need to move up before our launch next week.", "true_category": "plan_limits"},
+  {"text": "The dashboard just shows a spinning wheel forever after I log in. Cleared cache, tried incognito, tried Firefox too. Same thing. It was fine yesterday. Screenshot attached.", "true_category": "bug_report"},
+  {"text": "my card expired and i just got an email saying payment didnt go through. will i lose my stuff? i updated the card now", "true_category": "billing"},
+  {"text": "Never got the reset email. Checked junk too. Been 20 min.", "true_category": "password_reset"},
+  {"text": "Hey team, we'd love to become a reseller partner for your product in the APAC region. Who's the right person to talk to about margins and a partner agreement?", "true_category": "other"},
+  {"text": "got an email saying we're at 90% of our quota for the month and it's only the 18th. can we bump the limit today without waiting for next month or do we have to wait", "true_category": "plan_limits"},
+  {"text": "So I'm not sure if this is me or you guys but whenever I click Save on the team settings page the toggle I just changed flips back to what it was before after a refresh. Tried like 5 times. Mac, Safari 18. It says 'Saved!' each time which is extra confusing lol", "true_category": "bug_report"},
+  {"text": "Do you offer a discount for registered nonprofits? We're a small animal rescue and would like to use the tool.", "true_category": "other"}
+]
