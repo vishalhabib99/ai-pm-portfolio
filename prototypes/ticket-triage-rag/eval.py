@@ -5,15 +5,18 @@ answer (false positives at high confidence are worse than an unclassified
 ticket, per the PRD's reasoning). Runs three configs so the low-confidence
 retry is credited only with what it adds on its own.
 
-Run: python3 eval.py
+Run: python3 eval.py [tickets_file.json]
 """
 
 import json
 import os
+import sys
 
 from rag import build_indexes, load_docs, retrieve, triage, CATEGORY_DOCS, CONFIDENCE_THRESHOLD, GAP_THRESHOLD
 
 EVAL_FILE = os.path.join(os.path.dirname(__file__), "tickets_eval.json")
+if len(sys.argv) > 1:  # e.g. python3 eval.py tickets_fresh.json
+    EVAL_FILE = os.path.join(os.path.dirname(__file__), sys.argv[1])
 
 # (label, retry, gap_threshold). Running all three separates what the retry adds
 # from what abstaining on a narrow margin adds.
