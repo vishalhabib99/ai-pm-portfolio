@@ -10,7 +10,7 @@ Run: python3 eval.py
 import json
 import os
 
-from rag import build_tfidf, classify, load_docs, CONFIDENCE_THRESHOLD
+from rag import build_tfidf, classify, load_docs, retrieve, CATEGORY_DOCS, CONFIDENCE_THRESHOLD
 
 EVAL_FILE = os.path.join(os.path.dirname(__file__), "tickets_eval.json")
 
@@ -61,6 +61,28 @@ def run_eval():
         print("=> DOES NOT meet launch bar. See README for what this means.")
     else:
         print("=> Meets launch bar.")
+
+    retrieval_report(cases, doc_vectors, idf)
+
+
+def retrieval_report(cases, doc_vectors, idf):
+    """Score retrieval on its own, separately from the classify/abstain decision,
+    so every miss can be blamed on the right step. Only in-scope tickets have a
+    correct doc to retrieve; off-topic tickets can only fail at the decision step."""
+    in_scope = [c for c in cases if c["true_category"] in CATEGORY_DOCS]
+    ranks = []
+    print()
+    print("Retrieval only (in-scope tickets): rank of the correct doc, and its score")
+    for case in in_scope:
+        _, _, scores = retrieve(case["text"], doc_vectors, idf)
+        target = CATEGORY_DOCS[case["true_category"]]
+        # a correct doc with zero overlap wasn't retrieved, whatever a tie-break says
+        rank = sorted(scores, key=scores.get, reverse=True).index(target) + 1 if scores[target] > 0 else None
+        ranks.append(rank)
+        print(f"  {case['text'][:50]:52} rank={rank or 'not found':<9} score={scores[target]:.3f}")
+    for k in (1, 2):
+        hits = sum(1 for r in ranks if r and r <= k)
+        print(f"Recall@{k}: {hits / len(ranks):.0%} ({hits}/{len(ranks)})")
 
 
 if __name__ == "__main__":
