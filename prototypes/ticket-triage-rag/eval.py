@@ -1,8 +1,9 @@
 """
 Offline eval harness, matching the "Evaluation plan" section of the PRD:
-accuracy on classification, and precision on high-confidence predictions
-(false positives at high confidence are worse than an unclassified ticket,
-per the PRD's reasoning).
+accuracy on classification, and precision on the tickets the system chooses to
+answer (false positives at high confidence are worse than an unclassified
+ticket, per the PRD's reasoning). Runs three configs so the low-confidence
+retry is credited only with what it adds on its own.
 
 Run: python3 eval.py
 """
@@ -10,58 +11,72 @@ Run: python3 eval.py
 import json
 import os
 
-from rag import build_tfidf, classify, load_docs, retrieve, CATEGORY_DOCS, CONFIDENCE_THRESHOLD
+from rag import build_indexes, load_docs, retrieve, triage, CATEGORY_DOCS, CONFIDENCE_THRESHOLD, GAP_THRESHOLD
 
 EVAL_FILE = os.path.join(os.path.dirname(__file__), "tickets_eval.json")
+
+# (label, retry, gap_threshold). Running all three separates what the retry adds
+# from what abstaining on a narrow margin adds.
+CONFIGS = [
+    ("baseline (score only)", False, 0.0),
+    ("+ abstain on narrow gap", False, GAP_THRESHOLD),
+    ("+ retry, then abstain", True, GAP_THRESHOLD),
+]
+
+
+def score(cases, indexes, retry, gap_threshold):
+    rows = []
+    for case in cases:
+        predicted, confidence, best_doc, trace = triage(case["text"], indexes, retry, gap_threshold)
+        rows.append({
+            "text": case["text"], "true": case["true_category"], "pred": predicted,
+            "answered": best_doc is not None, "conf": confidence, "trace": trace,
+            "ok": predicted == case["true_category"],
+        })
+    correct = sum(r["ok"] for r in rows)
+    answered = [r for r in rows if r["answered"]]
+    answered_ok = sum(r["ok"] for r in answered)
+    return rows, correct, answered, answered_ok
 
 
 def run_eval():
     docs = load_docs()
-    doc_vectors, idf = build_tfidf(docs)
+    indexes = build_indexes(docs)
 
     with open(EVAL_FILE) as f:
         cases = json.load(f)
-
     total = len(cases)
-    correct = 0
-    high_conf_total = 0
-    high_conf_correct = 0
-    rows = []
 
-    for case in cases:
-        predicted, confidence, _ = classify(case["text"], doc_vectors, idf)
-        is_high_conf = confidence >= CONFIDENCE_THRESHOLD
-        # below threshold -> system abstains, prediction counts as "other"
-        effective_pred = predicted if is_high_conf else "other"
-        is_correct = effective_pred == case["true_category"]
+    results = [(label, *score(cases, indexes, retry, gap)) for label, retry, gap in CONFIGS]
 
-        if is_correct:
-            correct += 1
-        if is_high_conf:
-            high_conf_total += 1
-            if is_correct:
-                high_conf_correct += 1
+    # per-ticket view of the full loop (last config)
+    rows = results[-1][1]
+    print(f"{'ticket':52} {'true':14} {'pred':14} {'conf':6} {'passes':7} {'ok'}")
+    for r in rows:
+        passes = " -> ".join(f"{t['pass']}(gap {t['gap']:.3f})" for t in r["trace"])
+        print(f"{r['text'][:50]:52} {r['true']:14} {r['pred']:14} {r['conf']:<6.3f} "
+              f"{'✓' if r['ok'] else '✗'}  {passes}")
 
-        rows.append((case["text"][:50], case["true_category"], effective_pred, round(confidence, 3), is_correct))
+    print()
+    print(f"{'config':26} {'accuracy':>12} {'precision when answering':>26} {'retried':>8}")
+    for label, rows, correct, answered, answered_ok in results:
+        precision = f"{answered_ok / len(answered):.0%} ({answered_ok}/{len(answered)})" if answered else "n/a"
+        retried = sum(len(r["trace"]) > 1 for r in rows)
+        print(f"{label:26} {f'{correct / total:.0%} ({correct}/{total})':>12} {precision:>26} {retried:>8}")
 
+    _, _, correct, answered, answered_ok = results[-1]
     accuracy = correct / total
-    precision_high_conf = (high_conf_correct / high_conf_total) if high_conf_total else float("nan")
-
-    print(f"{'ticket':52} {'true':14} {'pred':14} {'conf':6} {'ok'}")
-    for text, true_cat, pred, conf, ok in rows:
-        print(f"{text:52} {true_cat:14} {pred:14} {conf:<6} {'✓' if ok else '✗'}")
-
+    precision_answered = answered_ok / len(answered) if answered else float("nan")
     print()
-    print(f"Overall accuracy: {accuracy:.0%} ({correct}/{total})")
-    print(f"Precision on high-confidence predictions (>= {CONFIDENCE_THRESHOLD}): "
-          f"{precision_high_conf:.0%} ({high_conf_correct}/{high_conf_total})")
-    print()
+    print(f"Thresholds: score >= {CONFIDENCE_THRESHOLD}, top-2 gap >= {GAP_THRESHOLD} "
+          "(gap chosen on these same tickets: in-sample)")
     print("PRD targets: >=90% accuracy, >=95% precision on high-confidence predictions.")
-    if accuracy < 0.90 or precision_high_conf < 0.95:
+    if accuracy < 0.90 or precision_answered < 0.95:
         print("=> DOES NOT meet launch bar. See README for what this means.")
     else:
         print("=> Meets launch bar.")
 
+    doc_vectors, idf, _ = indexes["plain"]
     retrieval_report(cases, doc_vectors, idf)
 
 
