@@ -4,7 +4,7 @@
 
 ## The short version
 
-In three days I checked six ideas. Four never got built, one got built and then parked, and one stayed a published failure. Each decision came from a bar I set before looking, not from how I felt about the idea afterwards. After the third idea in a row failed, I stopped generating ideas and put the time into getting outside users for what already existed. That became [scan by issue](https://github.com/vishalhabib99/mcp-doctor/blob/main/docs/experiments/2026-09-scan-by-issue.md).
+In three days I checked six ideas. Four never got built, one got built and then parked, and one stayed a published failure. The first four were each decided by a bar I set before looking; the last two were decided by red-team results I published. After the third idea in a row failed, I stopped generating ideas and put the time into getting outside users for what already existed. That became [scan by issue](https://github.com/vishalhabib99/mcp-doctor/blob/main/docs/experiments/2026-09-scan-by-issue.md).
 
 | Idea | What killed it | Decision |
 |---|---|---|
